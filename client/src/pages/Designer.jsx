@@ -222,22 +222,33 @@ const Designer = () => {
     }
   };
 
-  // PDF Export via html2pdf library
+  // PDF Export via html2pdf library (deferred to avoid UI freeze)
+  const [exportLoading, setExportLoading] = useState(false);
   const handleExportPDF = () => {
     setShowDropdown(false);
     const element = document.getElementById('resume-preview-container');
     if (!element) {
-      alert('Preview container not found');
+      alert('Preview container not found. Please go to the Preview & Export step first.');
       return;
     }
-    const opt = {
-      margin:       [0.2, 0.2, 0.2, 0.2],
-      filename:     `${(resume.personalInfo.fullName || 'Resume').replace(/\s+/g, '_')}_Resume.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2.5, useCORS: true },
-      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().from(element).set(opt).save();
+    setExportLoading(true);
+    // Defer to next tick so React can re-render the loading state before blocking
+    setTimeout(() => {
+      const opt = {
+        margin:       [0.2, 0.2, 0.2, 0.2],
+        filename:     `${(resume.personalInfo.fullName || 'Resume').replace(/\s+/g, '_')}_Resume.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().from(element).set(opt).save().then(() => {
+        setExportLoading(false);
+      }).catch((err) => {
+        console.error('PDF export error:', err);
+        setExportLoading(false);
+        alert('PDF export failed. Please try again.');
+      });
+    }, 100);
   };
 
   // HTML/DOCX Export wrapper
@@ -596,25 +607,38 @@ const Designer = () => {
           
           <div className="relative">
             <button
-              onClick={() => setShowDropdown(!showDropdown)}
-              className="px-4 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold uppercase tracking-wider text-xs flex items-center gap-1.5 transition-colors focus:outline-none"
+              onClick={() => !exportLoading && setShowDropdown(!showDropdown)}
+              disabled={exportLoading}
+              className="px-4 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold uppercase tracking-wider text-xs flex items-center gap-1.5 transition-colors focus:outline-none disabled:opacity-60 disabled:cursor-wait"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Export</span>
+              {exportLoading ? (
+                <>
+                  <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                  </svg>
+                  <span>Generating...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Export</span>
+                </>
+              )}
             </button>
-            {showDropdown && (
-              <div className="absolute right-0 top-full mt-1.5 w-40 glass-panel p-1 rounded-none z-50">
+            {showDropdown && !exportLoading && (
+              <div className="absolute right-0 top-full mt-1.5 w-44 glass-panel p-1 rounded-none z-50 border border-slate-200 shadow-lg">
                 <button
                   onClick={handleExportPDF}
-                  className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:text-black hover:bg-slate-50 rounded-none transition-colors"
+                  className="w-full text-left px-3 py-2.5 text-xs font-bold text-slate-700 hover:text-black hover:bg-slate-50 rounded-none transition-colors flex items-center gap-2"
                 >
-                  Download PDF
+                  <Download className="w-3.5 h-3.5" /> Download PDF
                 </button>
                 <button
                   onClick={handleExportWord}
-                  className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:text-black hover:bg-slate-50 rounded-none transition-colors"
+                  className="w-full text-left px-3 py-2.5 text-xs font-bold text-slate-700 hover:text-black hover:bg-slate-50 rounded-none transition-colors flex items-center gap-2"
                 >
-                  Download Word (.doc)
+                  <Download className="w-3.5 h-3.5" /> Download Word (.doc)
                 </button>
               </div>
             )}

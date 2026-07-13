@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -15,9 +16,10 @@ import Contact from './pages/Contact';
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
+      <ThemeProvider>
+        <AuthProvider>
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
           <main className="flex-grow">
             <Routes>
               {/* Public Routes */}
@@ -58,7 +60,8 @@ function App() {
             </Routes>
           </main>
         </div>
-      </AuthProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

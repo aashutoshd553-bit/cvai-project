@@ -56,29 +56,39 @@ export const analyzeResume = async (req, res) => {
       userId: req.user?.id || 'guest_id',
       fileName,
       atsScore: analysis.atsScore,
+      parsedData: {
+        name: analysis.parsedData?.name || '',
+        email: analysis.parsedData?.email || '',
+        phone: analysis.parsedData?.phone || '',
+        skills: analysis.parsedData?.skills || [],
+        education: analysis.parsedData?.education || [],
+        experience: analysis.parsedData?.experience || [],
+        projects: analysis.parsedData?.projects || [],
+        achievements: analysis.parsedData?.achievements || []
+      },
       layoutEvaluation: {
-        pages: analysis.layoutEvaluation.pages,
-        whitespace: analysis.layoutEvaluation.whitespace,
-        margins: analysis.layoutEvaluation.margins,
-        sectionOrder: analysis.layoutEvaluation.sectionOrder,
-        feedback: analysis.layoutEvaluation.feedback,
-        score: analysis.layoutEvaluation.score
+        pages: analysis.layoutEvaluation?.pages,
+        whitespace: analysis.layoutEvaluation?.whitespace,
+        margins: analysis.layoutEvaluation?.margins,
+        sectionOrder: analysis.layoutEvaluation?.sectionOrder,
+        feedback: analysis.layoutEvaluation?.feedback,
+        score: analysis.layoutEvaluation?.score
       },
       jobMatch: jobMatchResult,
       contentPerformance: {
-        actionVerbsScore: analysis.contentPerformance.actionVerbsScore,
-        actionVerbsFeedback: analysis.contentPerformance.actionVerbsFeedback,
-        metricsScore: analysis.contentPerformance.metricsScore,
-        metricsFeedback: analysis.contentPerformance.metricsFeedback,
-        grammarScore: analysis.contentPerformance.grammarScore,
-        grammarFeedback: analysis.contentPerformance.grammarFeedback
+        actionVerbsScore: analysis.contentPerformance?.actionVerbsScore,
+        actionVerbsFeedback: analysis.contentPerformance?.actionVerbsFeedback,
+        metricsScore: analysis.contentPerformance?.metricsScore,
+        metricsFeedback: analysis.contentPerformance?.metricsFeedback,
+        grammarScore: analysis.contentPerformance?.grammarScore,
+        grammarFeedback: analysis.contentPerformance?.grammarFeedback
       },
       aiSuggestions: {
-        summary: analysis.aiSuggestions.summary,
-        skills: analysis.aiSuggestions.skills,
-        projects: analysis.aiSuggestions.projects,
-        experience: analysis.aiSuggestions.experience,
-        achievements: analysis.aiSuggestions.achievements
+        summary: analysis.aiSuggestions?.summary,
+        skills: analysis.aiSuggestions?.skills,
+        projects: analysis.aiSuggestions?.projects,
+        experience: analysis.aiSuggestions?.experience,
+        achievements: analysis.aiSuggestions?.achievements
       },
       nextSteps: analysis.nextSteps,
       rawResumeText: resumeText

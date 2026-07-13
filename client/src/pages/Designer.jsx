@@ -1335,8 +1335,8 @@ const Designer = () => {
           </div>
 
           {/* Bordered sheet preview */}
-          <div className="shadow-2xl rounded-none overflow-hidden border border-slate-300 bg-slate-200 p-6">
-            <div id="resume-preview-container" className="min-h-[750px] shadow-inner bg-slate-200">
+          <div className="shadow-2xl rounded-none overflow-x-auto w-full border border-slate-300 bg-slate-200 p-2 sm:p-6">
+            <div id="resume-preview-container" className="min-h-[750px] shadow-inner bg-slate-200 w-full min-w-[320px]">
               {renderResumeContent()}
             </div>
           </div>
